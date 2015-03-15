@@ -7,18 +7,23 @@
 ## > matriz$get() %*% inversa
 
 ## Create a special object from a matrix to store inverse result
-## x$get -> gets the input matrix
+## x$get -> used to get the initial matrix
 ## x$setInv -> used to store the result when calculated
 ## x$getInv -> used to get the solution when it is cached
 
 makeCacheMatrix <- function(x = matrix()) {
+  
   m <- NULL
   set <- function(y) {
     x <<- y
     m <<- NULL
   }
+  # Initializing cache object with the information available (not the inverse matrix since it is not calculated here)
+  ## get -> gets the input matrix
   get <- function() x
+  # Initializing setInv with m (null) and the operation
   setInv <- function(solve) m <<- solve
+  # Initializing getInv with m (null)
   getInv <- function() m
   list(set = set, get = get,
        setInv = setInv,
@@ -30,16 +35,22 @@ makeCacheMatrix <- function(x = matrix()) {
 ## Input is an "cacheObject" created with makeCacheMatrix 
 ## Function verify if there is a inverse stored in the object, otherwise it calculates the solution
 
-
+## Return a matrix that is the inverse of 'x'
 cacheSolve <- function(x, ...) {
-        ## Return a matrix that is the inverse of 'x'
+  # Access to inverse stored inside the object X  
   m <- x$getInv()
+  # If m is null then there is no cached calculation
   if(!is.null(m)) {
     message("getting cached data")
+    # Return cached inverse matrix
     return(m)
   }
+  # No cached inverse so it has to be calculated
+  # x$get to get initial matrix
   data <- x$get()
+  # Calculate the inverse matrix with solve function
   m <- solve(data, ...)
+  #Store inverse matrix calculation in the object to be available for following call
   x$setInv(m)
   m
   
